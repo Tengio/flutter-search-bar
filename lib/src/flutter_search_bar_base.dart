@@ -163,7 +163,7 @@ class SearchBar {
           decoration: new InputDecoration(
               hintText: hintText,
               hintStyle: hintTextStyle ?? new TextStyle(color: textColor, fontSize: 16.0),
-              border: null
+              border: InputBorder.none,
           ),
           onSubmitted: (String val) async {
             if (closeOnSubmit) {
