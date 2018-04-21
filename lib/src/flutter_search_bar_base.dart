@@ -48,6 +48,14 @@ class SearchBar {
   /// The last built default AppBar used for colors and such.
   AppBar _defaultAppBar;
 
+  TextStyle textStyle;
+
+  TextStyle hintTextStyle;
+
+  Color iconsColor;
+
+  Color iconsDisabledColor;
+
   SearchBar({
     @required this.setState,
     @required this.buildDefaultAppBar,
@@ -58,7 +66,11 @@ class SearchBar {
     this.colorBackButton = true,
     this.closeOnSubmit = true,
     this.clearOnSubmit = true,
-    this.showClearButton = true
+    this.showClearButton = true,
+    this.textStyle,
+    this.hintTextStyle,
+    this.iconsColor,
+    this.iconsDisabledColor,
   }) {
     if (this.controller == null) {
       this.controller = new TextEditingController();
@@ -132,8 +144,8 @@ class SearchBar {
     Color barColor = inBar ? _defaultAppBar.backgroundColor : theme.canvasColor;
 
     // Don't provide a color (make it white) if it's in the bar, otherwise color it or set it to grey.
-    Color buttonColor = inBar ? null : (colorBackButton ? _defaultAppBar.backgroundColor ?? theme.primaryColor ?? Colors.grey.shade400 : Colors.grey.shade400);
-    Color buttonDisabledColor = inBar ? new Color.fromRGBO(255, 255, 255, 0.25) : Colors.grey.shade300;
+    Color buttonColor = iconsColor ?? (inBar ? null : (colorBackButton ? _defaultAppBar.backgroundColor ?? theme.primaryColor ?? Colors.grey.shade400 : Colors.grey.shade400));
+    Color buttonDisabledColor = iconsDisabledColor ?? (inBar ? new Color.fromRGBO(255, 255, 255, 0.25) : Colors.grey.shade300);
 
     Color textColor = inBar ? Colors.white70 : Colors.black54;
 
@@ -147,16 +159,10 @@ class SearchBar {
         child: new TextField(
           key: new Key('SearchBarTextField'),
           keyboardType: TextInputType.text,
-          style: new TextStyle(
-              color: textColor,
-              fontSize: 16.0
-          ),
+          style: textStyle,
           decoration: new InputDecoration(
               hintText: hintText,
-              hintStyle: new TextStyle(
-                  color: textColor,
-                  fontSize: 16.0
-              ),
+              hintStyle: hintTextStyle ?? new TextStyle(color: textColor, fontSize: 16.0),
               border: null
           ),
           onSubmitted: (String val) async {
