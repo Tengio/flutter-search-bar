@@ -8,10 +8,7 @@ void main() {
 class SearchBarDemoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-        title: 'Search Bar Demo',
-        theme: new ThemeData(primarySwatch: Colors.blue),
-        home: new SearchBarDemoHome());
+    return new MaterialApp(title: 'Search Bar Demo', theme: new ThemeData(primarySwatch: Colors.blue), home: new SearchBarDemoHome());
   }
 }
 
@@ -25,22 +22,22 @@ class _SearchBarDemoHomeState extends State<SearchBarDemoHome> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   AppBar buildAppBar(BuildContext context) {
-    return new AppBar(
-        title: new Text('Search Bar Demo'),
-        actions: [searchBar.getSearchAction(context)]);
+    return new AppBar(title: new Text('Search Bar Demo'), actions: [searchBar.getSearchAction(context)]);
   }
 
   void onSubmitted(String value) {
-    setState(() => _scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text('You wrote $value!'))));
+    setState(() => _scaffoldKey.currentState.showSnackBar(new SnackBar(content: new Text('You wrote $value!'))));
   }
 
   _SearchBarDemoHomeState() {
     searchBar = new SearchBar(
-        inBar: false,
-        buildDefaultAppBar: buildAppBar,
-        setState: setState,
-        onSubmitted: onSubmitted);
+      inBar: false,
+      buildDefaultAppBar: buildAppBar,
+      setState: setState,
+      onSubmitted: onSubmitted,
+      onSearchOpen: () => print("SearchOpen"),
+      onSearchClose: () => print("SearchClose"),
+    );
   }
 
   @override
@@ -48,8 +45,7 @@ class _SearchBarDemoHomeState extends State<SearchBarDemoHome> {
     return new Scaffold(
       appBar: searchBar.build(context),
       key: _scaffoldKey,
-      body: new Center(
-          child: new Text("Don't look at me! Press the search button!")),
+      body: new Center(child: new Text("Don't look at me! Press the search button!")),
     );
   }
 }

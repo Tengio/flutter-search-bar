@@ -7,6 +7,8 @@ import 'package:meta/meta.dart';
 typedef AppBar AppBarCallback(BuildContext context);
 typedef void TextFieldSubmitCallback(String value);
 typedef void SetStateCallback(void fn());
+typedef void OnSearchOpen();
+typedef void OnSearchClose();
 
 class SearchBar {
   /// Whether the search should take place "in the existing search bar", meaning whether it has the same background or a flipped one. Defaults to true.
@@ -32,6 +34,10 @@ class SearchBar {
 
   /// Whether or not the search bar should add a clear input button, defaults to true.
   final bool showClearButton;
+
+  final OnSearchOpen onSearchOpen;
+
+  final OnSearchClose onSearchClose;
 
   /// What the hintText on the search bar should be. Defaults to 'Search'.
   String hintText;
@@ -71,6 +77,8 @@ class SearchBar {
     this.hintTextStyle,
     this.iconsColor,
     this.iconsDisabledColor,
+    this.onSearchClose,
+    this.onSearchOpen,
   }) {
     if (this.controller == null) {
       this.controller = new TextEditingController();
@@ -113,12 +121,18 @@ class SearchBar {
     ModalRoute.of(context).addLocalHistoryEntry(new LocalHistoryEntry(
       onRemove: () {
         setState(() {
+          if(onSearchClose != null) {
+            onSearchClose();
+          }
           _isSearching = false;
         });
       }
     ));
 
     setState(() {
+      if(onSearchOpen != null) {
+        onSearchOpen();
+      }
       _isSearching = true;
     });
   }
