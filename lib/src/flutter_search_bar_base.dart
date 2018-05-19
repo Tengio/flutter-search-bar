@@ -205,7 +205,7 @@ class SearchBar {
             disabledColor: buttonDisabledColor,
             onPressed: !_clearActive ? null : () { controller.clear(); })
       ],
-      bottom: bottomBuilder == null ? null : bottomBuilder(context),
+      bottom: bottomBuilder == null ? _defaultAppBar.bottom : bottomBuilder(context),
     );
   }
 
