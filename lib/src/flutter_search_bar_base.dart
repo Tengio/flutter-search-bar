@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 typedef AppBar AppBarCallback(BuildContext context);
+typedef PreferredSizeWidget BottomBuilder(BuildContext context);
 typedef void TextFieldSubmitCallback(String value);
 typedef void SetStateCallback(void fn());
 typedef void OnSearchOpen();
@@ -38,6 +39,8 @@ class SearchBar {
   final OnSearchOpen onSearchOpen;
 
   final OnSearchClose onSearchClose;
+
+  final BottomBuilder bottomBuilder;
 
   /// What the hintText on the search bar should be. Defaults to 'Search'.
   String hintText;
@@ -79,6 +82,7 @@ class SearchBar {
     this.iconsDisabledColor,
     this.onSearchClose,
     this.onSearchOpen,
+    this.bottomBuilder,
   }) {
     if (this.controller == null) {
       this.controller = new TextEditingController();
@@ -201,6 +205,7 @@ class SearchBar {
             disabledColor: buttonDisabledColor,
             onPressed: !_clearActive ? null : () { controller.clear(); })
       ],
+      bottom: bottomBuilder == null ? null : bottomBuilder(context),
     );
   }
 

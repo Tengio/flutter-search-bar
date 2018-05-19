@@ -22,7 +22,11 @@ class _SearchBarDemoHomeState extends State<SearchBarDemoHome> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   AppBar buildAppBar(BuildContext context) {
-    return new AppBar(title: new Text('Search Bar Demo'), actions: [searchBar.getSearchAction(context)]);
+    return new AppBar(
+      title: new Text('Search Bar Demo'),
+      actions: [searchBar.getSearchAction(context)],
+      bottom: buildBottom(context),
+    );
   }
 
   void onSubmitted(String value) {
@@ -37,8 +41,11 @@ class _SearchBarDemoHomeState extends State<SearchBarDemoHome> {
       onSubmitted: onSubmitted,
       onSearchOpen: () => print("SearchOpen"),
       onSearchClose: () => print("SearchClose"),
+      bottomBuilder: buildBottom,
     );
   }
+
+  Widget buildBottom(BuildContext context) => new BottomExampleWidget();
 
   @override
   Widget build(BuildContext context) {
@@ -48,4 +55,12 @@ class _SearchBarDemoHomeState extends State<SearchBarDemoHome> {
       body: new Center(child: new Text("Don't look at me! Press the search button!")),
     );
   }
+}
+
+class BottomExampleWidget extends StatelessWidget implements PreferredSizeWidget {
+  @override
+  Widget build(BuildContext context) => new Container();
+
+  @override
+  Size get preferredSize => new Size.fromHeight(kToolbarHeight);
 }
