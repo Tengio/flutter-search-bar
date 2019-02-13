@@ -122,19 +122,21 @@ class SearchBar {
   ///
   /// This adds a new route that listens for onRemove (and stops the search when that happens), and then calls [setState] to rebuild and start the search.
   void beginSearch(context) {
-    ModalRoute.of(context).addLocalHistoryEntry(new LocalHistoryEntry(
-      onRemove: () {
+    ModalRoute.of(context).addScopedWillPopCallback(() {
+      if (_isSearching == true) {
         setState(() {
-          if(onSearchClose != null) {
+          if (onSearchClose != null) {
             onSearchClose();
           }
           _isSearching = false;
         });
+        return new Future<bool>.value(false);
       }
-    ));
+      return new Future<bool>.value(true);
+    });
 
     setState(() {
-      if(onSearchOpen != null) {
+      if (onSearchOpen != null) {
         onSearchOpen();
       }
       _isSearching = true;
@@ -162,49 +164,58 @@ class SearchBar {
     Color barColor = inBar ? _defaultAppBar.backgroundColor : theme.canvasColor;
 
     // Don't provide a color (make it white) if it's in the bar, otherwise color it or set it to grey.
-    Color buttonColor = iconsColor ?? (inBar ? null : (colorBackButton ? _defaultAppBar.backgroundColor ?? theme.primaryColor ?? Colors.grey.shade400 : Colors.grey.shade400));
-    Color buttonDisabledColor = iconsDisabledColor ?? (inBar ? new Color.fromRGBO(255, 255, 255, 0.25) : Colors.grey.shade300);
+    Color buttonColor = iconsColor ??
+        (inBar
+            ? null
+            : (colorBackButton
+                ? _defaultAppBar.backgroundColor ?? theme.primaryColor ?? Colors.grey.shade400
+                : Colors.grey.shade400));
+    Color buttonDisabledColor =
+        iconsDisabledColor ?? (inBar ? new Color.fromRGBO(255, 255, 255, 0.25) : Colors.grey.shade300);
 
     Color textColor = inBar ? Colors.white70 : Colors.black54;
 
     return new AppBar(
-      leading: new BackButton(
-        color: buttonColor
-      ),
+      leading: new BackButton(color: buttonColor),
       backgroundColor: barColor,
       title: new Directionality(
-        textDirection: Directionality.of(context),
-        child: new TextField(
-          key: new Key('SearchBarTextField'),
-          keyboardType: TextInputType.text,
-          style: textStyle,
-          decoration: new InputDecoration(
+          textDirection: Directionality.of(context),
+          child: new TextField(
+            key: new Key('SearchBarTextField'),
+            keyboardType: TextInputType.text,
+            style: textStyle,
+            decoration: new InputDecoration(
               hintText: hintText,
               hintStyle: hintTextStyle ?? new TextStyle(color: textColor, fontSize: 16.0),
               border: InputBorder.none,
-          ),
-          onSubmitted: (String val) async {
-            if (closeOnSubmit) {
-              await Navigator.maybePop(context);
-            }
+            ),
+            onSubmitted: (String val) async {
+              if (closeOnSubmit) {
+                await Navigator.maybePop(context);
+              }
 
-            if (clearOnSubmit) {
-              controller.clear();
-            }
+              if (clearOnSubmit) {
+                controller.clear();
+              }
 
-            onSubmitted(val);
-          },
-          autofocus: true,
-          controller: controller,
-        )
-      ),
-      actions: !showClearButton ? null : <Widget>[
-        // Show an icon if clear is not active, so there's no ripple on tap
-        new IconButton(
-            icon: new Icon(Icons.clear, color: _clearActive ? buttonColor : buttonDisabledColor),
-            disabledColor: buttonDisabledColor,
-            onPressed: !_clearActive ? null : () { controller.clear(); })
-      ],
+              onSubmitted(val);
+            },
+            autofocus: true,
+            controller: controller,
+          )),
+      actions: !showClearButton
+          ? null
+          : <Widget>[
+              // Show an icon if clear is not active, so there's no ripple on tap
+              new IconButton(
+                  icon: new Icon(Icons.clear, color: _clearActive ? buttonColor : buttonDisabledColor),
+                  disabledColor: buttonDisabledColor,
+                  onPressed: !_clearActive
+                      ? null
+                      : () {
+                          controller.clear();
+                        })
+            ],
       bottom: bottomBuilder == null ? _defaultAppBar.bottom : bottomBuilder(context),
     );
   }
@@ -214,11 +225,10 @@ class SearchBar {
   /// Put this inside your [buildDefaultAppBar] method!
   IconButton getSearchAction(BuildContext context) {
     return new IconButton(
-      icon: new Icon(Icons.search),
-      onPressed: () {
-        beginSearch(context);
-      }
-    );
+        icon: new Icon(Icons.search),
+        onPressed: () {
+          beginSearch(context);
+        });
   }
 
   /// Returns an AppBar based on the value of [_isSearching]
